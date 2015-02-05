@@ -6,10 +6,11 @@ Created on Tue Avr 1 13:41:21 2014
 """
 import networkx as nx
 
-#from networkx_functs import *
+
 import pickle
 from OPS2NetUtils2 import *
 
+from P2NBiblio import *
 DureeBrevet = 20
 SchemeVersion = '20140101' #for the url to the classification scheme
 import os, sys, datetime
@@ -18,7 +19,7 @@ import os, sys, datetime
 ListeBrevet = []
 #ouverture fichier de travail
 
-with open("..//Requete.cql", "r") as fic:
+with open("requete.cql", "r") as fic:
     contenu = fic.readlines()
     for lig in contenu:
         #if not lig.startswith('#'):
@@ -52,12 +53,10 @@ except:
 inventeur = dict()
 applicant = dict()
 if ficOk:
-    #TableCor = dict()
+    TableCor = dict()
     dynamic = True # spécifie la date des brevets
     
-#    ListeBrevet = NettoiePays(ListeBrevet)   
-#    ListeBrevet = NettoieProprietes(ListeBrevet, "inventeur")
-#    ListeBrevet = NettoieProprietes(ListeBrevet, "applicant")
+
     lstTemp = []
     listeDates = []
     for Brev in ListeBrevet:
@@ -128,9 +127,6 @@ if ficOk:
     Pays, Inventeurs, LabelBrevet, Applicant = set(), set(), set(), set()
     Classification, IPCR1, IPCR3, IPCR4, IPCR7, IPCR11 = [], [], [], [], [], []
 
-#    Pays = set([(u) for u in GenereListeSansDate(ListeBrevet, 'pays')])
-#    Inventeurs = set([(u) for u in GenereListeSansDate(ListeBrevet, 'inventeur')])
-#    LabelBrevet = set([(u) for u in GenereListeSansDate(ListeBrevet, 'label')])
     Applicant = set([(u) for u in GenereListeSansDate(ListeBrevet, 'applicant')])
     
     Classification, IPCR1, IPCR3, IPCR4, IPCR7, IPCR11 = [], [], [], [], [], [] 
@@ -142,97 +138,17 @@ if ficOk:
     IPCR4 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR4'] for u in ListeBrevet if u['IPCR4'] != ''])]))
     IPCR7 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR7'] for u in ListeBrevet if u['IPCR7'] != ''])]))
     IPCR11 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR11'] for u in ListeBrevet if u['IPCR11'] != '']) if tt not in IPCR11]))
-#
-#    IPCR3 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR3')])
-#    IPCR4 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR4')])
-#    IPCR7 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR7')])
-#    IPCR11 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR11')])
-    #status = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'status')])
-    listelistes = []
-    #listelistes.append(Pays)
-    #listelistes.append(Inventeurs)
-    #listelistes.append(LabelBrevet)
+
     listelistes.append(Applicant)
-    #listelistes.append(Classification)
+   
     listelistes.append(IPCR1)
-    #listelistes.append(IPCR3)
+   
     listelistes.append(IPCR4)
-    #listelistes.append(IPCR7)
+    
     listelistes.append(IPCR11)
-    #listelistes.append(status)
+   
     
-    def ExtraitMinDate(noeud):
-        if noeud.has_key('time'):
-            for i in noeud['time']:
-                mini = 3000
-                if i[1] < mini:
-                    mini = i[1]
-        else:
-            mini = dateDujour
-        return mini
-    
-    def getStatus2(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['portee']
-        return ''
-    def getStatus(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if isinstance(Brev['status'], list):
-                    if len(Brev['status']) == 1:
-                        if isinstance(Brev['status'][0], list):
-                            if len(Brev['status'][0]) == 1:
-                                return Brev['status'][0][0]
-                            else:
-                                return Brev['status'][0] #have to deal with list and attributes....}
-                        else:
-                            return Brev['status'][0]
-                    else:
-                        Brev['status'][0]
-                return Brev['status']
-        return 'NA'
-    def getClassif(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['classification']
-        return 'NA'
-    
-    def getCitations(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if Brev.has_key('citations'):
-                    return Brev['citations']
-                else:
-                    return 0
-        return 0
-    
-    def getFamilyLenght(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if Brev.has_key('family lenght'):
-                    return Brev['family lenght']
-                else:
-                    return 0
-        return 0
-        
-    def getPrior(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['prior']
-        return ''
-    
-    def getActiveIndicator(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['priority-active-indicator']
-        return 0
-    
-    def getRepresentative(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['representative']
-        return 0
+
     
     ListeNoeuds =[]
     for liste in listelistes:
@@ -307,14 +223,48 @@ if ficOk:
     DateNoeud = dict()
     for lien in reseau:
         n1, n2, dat, pipo = lien
-        if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
-            DateNoeud[n1].append(dat)
-        elif not DateNoeud.has_key(n1):
-            DateNoeud[n1] = [dat]
-        if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
-            DateNoeud[n2].append(dat)
-        elif not DateNoeud.has_key(n2):
-            DateNoeud[n2] = [dat]
+        
+        if isinstance(n1, list) and isinstance(n2, list):
+            for kk in n1:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+            for kk in n2:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+        
+        elif isinstance(n1, list) and not isinstance(n2, list):
+            for kk in n1:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+                if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
+                    DateNoeud[n2].append(dat)
+                elif not DateNoeud.has_key(n2):
+                    DateNoeud[n2] = [dat]
+        elif not isinstance(n1, list) and isinstance(n2, list):
+            for kk in n2:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+                if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
+                    DateNoeud[n1].append(dat)
+                elif not DateNoeud.has_key(n1):
+                    DateNoeud[n1] = [dat]
+        else:
+            if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
+                DateNoeud[n1].append(dat)
+            elif not DateNoeud.has_key(n1):
+                DateNoeud[n1] = [dat]
+            if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
+                DateNoeud[n2].append(dat)
+            elif not DateNoeud.has_key(n2):
+                DateNoeud[n2] = [dat]     
  
 
     #avoid lists in nodes
