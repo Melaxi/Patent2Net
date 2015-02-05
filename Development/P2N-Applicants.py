@@ -6,10 +6,10 @@ Created on Tue Avr 1 13:41:21 2014
 """
 import networkx as nx
 
-#from networkx_functs import *
+
 import pickle
 from OPS2NetUtils2 import *
-
+from P2NBiblio import *
 DureeBrevet = 20
 SchemeVersion = '20140101' #for the url to the classification scheme
 import os, sys, datetime
@@ -17,11 +17,11 @@ import os, sys, datetime
 
 ListeBrevet = []
 #ouverture fichier de travail
-
-with open("..//Requete.cql", "r") as fic:
+#On récupère la requête et les noms des fichiers de travail
+with open("requete.cql", "r") as fic:
     contenu = fic.readlines()
     for lig in contenu:
-        #if not lig.startswith('#'):
+        
             if lig.count('request:')>0:
                 requete=lig.split(':')[1].strip()
             if lig.count('DataDirectory:')>0:
@@ -52,43 +52,18 @@ except:
 inventeur = dict()
 applicant = dict()
 if ficOk:
-    #TableCor = dict()
+    
     dynamic = True # spécifie la date des brevets
     
-#    ListeBrevet = NettoiePays(ListeBrevet)   
-#    ListeBrevet = NettoieProprietes(ListeBrevet, "inventeur")
-#    ListeBrevet = NettoieProprietes(ListeBrevet, "applicant")
     lstTemp = []
     listeDates = []
     for Brev in ListeBrevet:
-        #if Brev['label'] == Brev["prior"]: # just using primary patents not all the family
+       
         listeDates.append(Brev['date'])
-#        if isinstance(Brev['classification'], list):
-#            for classif in Brev['classification']:
-#                tempo2 = ExtractClassificationSimple2(classif)
-#                for cle in tempo2.keys():
-#                    if cle in Brev.keys() and tempo2[cle] not in Brev[cle]:
-#                        if Brev[cle] == '':
-#                            Brev[cle] = []
-#                        Brev[cle].append(tempo2[cle])
-#                    else:
-#                        Brev[cle] = []
-#                        Brev[cle].append(tempo2[cle])
-#        elif Brev['classification'] != '':
-#            tempo2 = ExtractClassificationSimple2(Brev['classification'])
-#            for cle in tempo2.keys():
-#                if cle in Brev.keys() and tempo2[cle] not in Brev[cle]:
-#                    if Brev[cle] == '':
-#                            Brev[cle] = []
-#                    Brev[cle].append(tempo2[cle])
-#                else:
-#                    Brev[cle] = []
-#                    Brev[cle].append(tempo2[cle])
-                            
-#                print classif
+
         memo = Brev['applicant']
         # remember applicant original writing form to reuse in the url property of the node
-        # hope that copied list is in the sameorder than the original... else there might be some mixing data 
+        # hope that copied list is in the same order than the original... else there might be some mixing data 
         
         if isinstance(Brev['applicant'], list):
             Brev['applicant'] =[FormateGephi(toto) for toto in Brev['applicant']]
@@ -99,17 +74,7 @@ if ficOk:
             applicant[Brev['applicant']] = FormateGephi(memo)
         else:
             Brev['applicant'] = u'N/A'
-        # remember inventor original writing form to reuse in the url property of the node
-#        memo = Brev['inventeur']
-#        if isinstance(Brev['inventeur'], list):
-#            Brev['inventeur'] =[FormateGephi(toto) for toto in Brev['inventeur']]
-#            for inv in range(len(Brev['inventeur'])):
-#                inventeur[Brev['inventeur'][inv]] = FormateGephi(memo[inv])
-#        elif isinstance(Brev['inventeur'], unicode):
-#            Brev['inventeur'] = FormateGephi(Brev['inventeur'])
-#            inventeur[Brev['inventeur']] = FormateGephi(memo)
-#        else:
-#            Brev['inventeur'] =u'N/A'
+       
         lstTemp.append(Brev)
     ListeBrevet = lstTemp
     Norm = dict()
@@ -122,117 +87,19 @@ if ficOk:
                 norm += 1
         Brev['Norm'] = norm
         Norm[Brev['label']] = norm
-        #les deux lignes suivante sont inutiles si l'on commente les bonnes lignes lors de la création des attributs du graphes...
+    #les deux lignes suivante sont inutiles si l'on commente les bonnes lignes lors de la création des attributs du graphes...
     # c'est dans la todo-list car améliorerait grandement les perf sur des gros réseaux
     Pays, Inventeurs, LabelBrevet, Applicant = set(), set(), set(), set()
     Classification, IPCR1, IPCR3, IPCR4, IPCR7, IPCR11 = [], [], [], [], [], []
     
-#    Pays = set([(u) for u in GenereListeSansDate(ListeBrevet, 'pays')])
-#    Inventeurs = set([(u) for u in GenereListeSansDate(ListeBrevet, 'inventeur')])
-#    LabelBrevet = set([(u) for u in GenereListeSansDate(ListeBrevet, 'label')])
     Applicant = set([(u) for u in GenereListeSansDate(ListeBrevet, 'applicant')])
     
-#    Classification, IPCR1, IPCR3, IPCR4, IPCR7, IPCR11 = [], [], [], [], [], [] 
-#    Classification = [tt for tt in Ops3.UnNest2List([u['classification'] for u in ListeBrevet if u['classification'] != '']) if tt not in Classification]
-    #Classification = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'classification')])
-#    IPCR1 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR1'] for u in ListeBrevet if u['IPCR1'] != ''])]))
-#    IPCR3 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR3'] for u in ListeBrevet if u['IPCR3'] != ''])]))
-#    IPCR1 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR1'] for u in ListeBrevet if u['IPCR1'] != ''])]))
-#    IPCR4 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR4'] for u in ListeBrevet if u['IPCR4'] != ''])]))
-#    IPCR7 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR7'] for u in ListeBrevet if u['IPCR7'] != ''])]))
-#    IPCR11 = list(set([tt for tt in Ops3.UnNest2List([u['IPCR11'] for u in ListeBrevet if u['IPCR11'] != '']) if tt not in IPCR11]))
-#
-#    IPCR3 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR3')])
-#    IPCR4 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR4')])
-#    IPCR7 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR7')])
-#    IPCR11 = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'IPCR11')])
-    #status = ContractList([(u) for u in GenereListeSansDate(ListeBrevet, 'status')])
+
     listelistes = []
-    #listelistes.append(Pays)
-    #listelistes.append(Inventeurs)
-    #listelistes.append(LabelBrevet)
+    
     listelistes.append(Applicant)
-    #listelistes.append(Classification)
-    #listelistes.append(IPCR1)
-    #listelistes.append(IPCR3)
-    #listelistes.append(IPCR4)
-    #listelistes.append(IPCR7)
-    #listelistes.append(IPCR11)
-    #listelistes.append(status)
-    
-    def ExtraitMinDate(noeud):
-        if noeud.has_key('time'):
-            for i in noeud['time']:
-                mini = 3000
-                if i[1] < mini:
-                    mini = i[1]
-        else:
-            mini = dateDujour
-        return mini
-    
-    def getStatus2(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['portee']
-        return ''
-    def getStatus(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if isinstance(Brev['status'], list):
-                    if len(Brev['status']) == 1:
-                        if isinstance(Brev['status'][0], list):
-                            if len(Brev['status'][0]) == 1:
-                                return Brev['status'][0][0]
-                            else:
-                                return Brev['status'][0] #have to deal with list and attributes....}
-                        else:
-                            return Brev['status'][0]
-                    else:
-                        Brev['status'][0]
-                return Brev['status']
-        return 'NA'
-    def getClassif(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['classification']
-        return 'NA'
-    
-    def getCitations(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if Brev.has_key('citations'):
-                    return Brev['citations']
-                else:
-                    return 0
-        return 0
-    
-    def getFamilyLenght(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                if Brev.has_key('family lenght'):
-                    return Brev['family lenght']
-                else:
-                    return 0
-        return 0
-        
-    def getPrior(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['prior']
-        return ''
-    
-    def getActiveIndicator(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['priority-active-indicator']
-        return 0
-    
-    def getRepresentative(noeud, listeBrevet):
-        for Brev in listeBrevet:
-            if Brev['label'] == noeud:
-                return Brev['representative']
-        return 0
-    
+       
+   
     ListeNoeuds =[]
     for liste in listelistes:
         ListeNoeuds += [u for u in liste if u not in ListeNoeuds]
@@ -248,57 +115,16 @@ if ficOk:
     appariement = dict() # dictionnaires des appariements selon les propriétés des brevets
     # sera envoyé en paramètres à la fonction GenereReseau3
     # un/comment hereafter for desired network creation
-#    appariement['Nation'] = ['label', 'pays']
-#    appariement['inventeur-label'] = ['inventeur', 'label']
-#    appariement['applicant-label'] = ['applicant', 'label']
-#    appariement['inventeur-inventeur'] = ['inventeur', 'inventeur']
-#    appariement['applicant-applicant'] = ['applicant', 'applicant']
-#    appariement['inventeur-applicant'] = ['inventeur', 'applicant']
-#    appariement['label-classification'] = ['label', 'classification']
-#    appariement[''] = ['','']
-#    appariement[''] = ['','']
-    
-    #appariement['IPCR-IPCR'] = ['classification', 'classification']
-    
-#    lstCrit= ['inventeur', 'label', 'applicant', 'pays']
-#    for i in lstCrit:
-#        for j in lstCrit:
-#            appariement[change(i)+'-'+change(j)] = [i,j]
-#    lstCat = ['IPCR1', 'IPCR3', 'IPCR4', 'IPCR7', 'IPCR11']
-#    for i in lstCat:
-#        for j in lstCat:
-#            #if i == j: #only same IPC level
-#                appariement[change(i)+'-'+change(j)] = [i,j]
-#    for i in lstCrit:
-#        for j in lstCat: #cross technology networks
-#            appariement[change(i)+'-'+change(j)] = [i,j]
-#            appariement[change(j)+'-'+change(i)] = [j,i]
-#             
-#    appariement['inventor-inventor'] = ['inventeur','inventeur']
-    appariement['applicant-applicant'] = ['applicant','applicant']
-#    appariement['applicant-'+change('pays')] = ['applicant','pays']
-#    appariement['applicant-label'] = ['applicant','label']
-#    appariement['label-IPCR1'] = ['label','IPCR1']
-#    appariement['IPCR1-IPCR3'] = ['IPCR1','IPCR3']
-#    appariement['IPCR3-IPCR4'] = ['IPCR3','IPCR4']
-#    appariement['IPCR4-IPCR7'] = ['IPCR4','IPCR7']
-#    
-#    appariement['IPCR7-IPCR11'] = ['IPCR7','IPCR11']
-#    appariement['applicant-IPCR1'] = ['applicant','IPCR1']
-#    appariement['label-status'] = ['label','status']
-#    appariement['applicant-IPCR11'] = ['applicant','IPCR11']
-#    appariement['inventor-IPCR11'] = ['inventor','IPCR11']
 
-    
-    
-    #G= nx.DiGraph()
+    appariement['applicant-applicant'] = ['applicant','applicant']
+
     for Brev in ListeBrevet:
         if 'date' not in Brev.keys():
             print Brev
             Brev['date'] = datetime.date(datetime.date.today()+2, 1, 1)
             
     G, reseau, Prop = GenereReseaux3(G, ListeNoeuds, ListeBrevet, appariement, dynamic)
-    #
+    
     DateNoeud = dict()
     for lien in reseau:
         n1, n2, dat, pipo = lien
@@ -496,8 +322,7 @@ if ficOk:
                     G.node[ListeNoeuds.index(noeud)]['label'] = noeud + '-' +attr['name']
             else:
                 print "on devrait pas être là, never", noeud
-                #G.node[ListeNoeuds.index(noeud)]['end'] = ExtraitMinDate(G.node[ListeNoeuds.index(noeud)]) + DureeBrevet
-                #G.node[ListeNoeuds.index(noeud)]['start'] = 
+                
     G.graph['defaultedgetype'] = "directed"
     G.graph['timeformat'] = "date"
     G.graph['mode'] = "dynamic"
@@ -556,39 +381,3 @@ if ficOk:
         pass
     os.rename(ResultPathGephi+'\\'+"Good"+ndf+'2.gexf', ResultPathGephi+'\\'+ndf.replace('.dump', '')+"_Applicants"+'.gexf')
     print "Network file writen in ",  ResultPathGephi+' directory.\n See file: '+ndf.replace('.dump', '')+"_Applicants"+'.gexf'
-    
-    # making the html from model
-#    FicRezo = ndf.replace('.dump', '')+"_Applicants"+'.gexf'
-#    nomAremplacer = '***reseauApplicants***'
-#    with open('Graphe.html', 'r') as  fic:
-#        contHtml = fic.read()
-#        contHtml = contHtml.replace('***TitleNet***', 'Applicant Network for ' + requete)
-#        contHtml = contHtml.replace('***fichier***','../../GephiFilesV5/'+FicRezo)
-#        contHtml = contHtml.replace('media/styles', '../../../Patent2Net/media/styles', contHtml.count('media/styles'))
-#        contHtml = contHtml.replace('media/js', '../../../Patent2Net/media/js', contHtml.count('media/js'))
-#        contHtml = contHtml.replace('***fichierConfigJS***','../../GephiFilesV5/Config'+FicRezo.replace('.gexf', '.js'))
-#        with open(ResultPathContent+'\\'+rep+'\\'+ FicRezo.replace('gexf', 'html'), 'w') as FicRes:
-#            FicRes.write(contHtml)
-#    # making the js from model
-#    with open("config.js", 'r') as fic:
-#        with open(ResultPathGephi + '\\Config' + FicRezo.replace('.gexf', '.js'), 'w') as ficRes:
-#            ficRes.write(fic.read().replace('FicRezo', FicRezo))
-#    
-#    try:
-#        fic = open(ResultPathContent+'\\'+'1'+ndf+'OpenNav'.bat, 'r')
-#        cont = fic.read().strip()
-#        fic.close()
-#        fic = open(ResultPathContent+'\\'+rep+'\\'+'1'+ndf+'OpenNav'.bat, 'w')
-#        fic.write(cont.replace(nomAremplacer, FicRezo))
-#        fic.write('\n')
-#        fic.close()
-#        
-#    except: #using Model
-#        fic = open('OpenNav.bat', 'r')
-#        ficRes = open(ResultPathContent+'\\'+rep+'\\'+'1'+ndf+'OpenNav.bat', 'w')
-#        cont = fic.read().strip()
-#        fic.close()
-#        ficRes.write(cont.replace(nomAremplacer, FicRezo))
-#        ficRes.write('\n')
-#        ficRes.close()
-#        
