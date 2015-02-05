@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Tue Avr 1 13:41:21 2014
@@ -29,7 +30,7 @@ global secret
 
 # put your credential from epo client in this file...
 # chargement clés de client
-fic = open('..//cles-epo.txt', 'r')
+fic = open('cles-epo.txt', 'r')
 key, secret = fic.read().split(',')
 fic.close()
 
@@ -74,7 +75,7 @@ cptNotFound=0
 nbTrouves = 0
 
 
-with open("..//Requete.cql", "r") as fic:
+with open("requete.cql", "r") as fic:
     contenu = fic.readlines()
     for lig in contenu:
         #if not lig.startswith('#'):
@@ -311,7 +312,7 @@ print "Ignored  patents from patent list", PatIgnored
 print "use it with PatentToNetV5."    
 
 print "Formating export in HTML. See DONNEES\PatentContentHTML\\"+ndf
-os.system("FormateExport.exe "+ndf)
+os.system("FormateExport.py "+ndf)
 
 
     
