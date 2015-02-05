@@ -171,7 +171,7 @@ def ExtractClassificationSimple(data):
             Resultat['classification'] = data
             data = data.replace(' ', '', data.count(' '))
             Resultat['IPCR11'] = data
-
+            
             Resultat['IPCR1']=data[0]
             if len(data) > 2:
                 Resultat['IPCR3']= data[0:3]
@@ -220,8 +220,8 @@ def ExtractClassificationSimple2(data):
             Resultat['classification'] = data
             data = data.replace(' ', '', data.count(' '))
             Resultat['IPCR11'] = data
-
-            Resultat['IPCR1']=data[0]
+####
+            Resultat['IPCR11']=data[0]
             if len(data) > 2:
                 Resultat['IPCR3']= data[0:3]
             else:
@@ -373,36 +373,12 @@ def ExtractClassification(data):
             print "should not be here, pb in classification content"
     else:
         resultat = dict()
+      
         for ipc in ["classification", 'IPCR1', 'IPCR3', 'IPCR4', 'IPCR7', 'IPCR11', 'status']:
             resultat[ipc] = []
+             
         res = resultat
-#    if isinstance(res, list):
-#        
-#        resu = dict()
-#        if isinstance(res[0], dict):
-#            for cle in res[0].keys():
-#                resu[cle] = []
-#            for dic in res:
-#                for cle in dic.keys():
-#                    resu[cle].append(dic[cle])
-#            for cle in resu.keys():
-#                if isinstance(resu[cle], list):
-#                    temp = []
-#                    temp = [u for u in resu[cle] if u not in temp]
-#                    resu[cle] = temp
-#        else:
-#            print "should nto be here"
-##            if isinstance(res[0], list) and len(res[0]) == 1:
-##                res[0] = res[0][0]
-##                for cle in res[0].keys():
-##                    resu[cle] = []
-##                for dic in res:
-##                    for cle in dic.keys():
-##                        resu[cle].append(dic[cle])
-##                for cle in resu.keys():
-##                    if isinstance(resu[cle], list):
-##                        temp = [u for u in resu[cle] if u not in temp]
-##                        resu[cle] = temp
+        
 
     return res
 
@@ -412,7 +388,11 @@ def FormateGephi(chaine):
     #mem = chaine
     assert(isinstance(chaine, unicode))
     
+    
+   
     if chaine is not None:
+        
+        
         if type(chaine) == type([]):
             res = []
             for ch in chaine:
@@ -421,7 +401,9 @@ def FormateGephi(chaine):
             return res
         else:
             chaine = chaine.title()
-            chaine = chaine.replace(' ', '', chaine.count(' '))
+#            chaine = chaine.replace(' ', '', chaine.count(' '))
+# ligne à retirer pour garder l'espace entre nom et prénom des inventeurs.
+            
             try:
                 chaine = chaine.decode('latin1')
                 chaine = chaine.encode('utf8')
@@ -433,120 +415,13 @@ def FormateGephi(chaine):
                     return chaine
                 except:
                     #print "unicode problem in formate"
-    #                print chaine
+         
                     pass
+            
             return chaine
     else:
         return u''
            
-    
-def Formate(chaine, pays):
-    """formatte la chaine pour que ce soit un noeud correct pour Gephi et autres outils :
-        notation hongroise (ou bulgare :-) : CeciEstUnePhrase.
-        Vire le pays le cas échéant"""
-    #mem = chaine
-    if chaine is not None:
-        if type(chaine) == type([]):
-            res = []
-            for ch in chaine:
-                temp = Formate(ch, pays)
-                res.append(temp)
-            return res
-#        elif len(pays) >0:
-#            if chaine.count(' '+pays) >0 or chaine.count('[pays]') >0:
-#                temp = chaine.replace(pays, '')
-#                if temp.count('[]') >0:
-#                    temp = temp.replace('[]', '')
-#                chaine = temp.strip()
-#        chaine = chaine.lower()
-#        chaine = chaine.encode('utf8')
-#        chaine = chaine.title()
-#        chaine = chaine.replace(' ', '', chaine.count(' '))
-#        chaine = chaine.replace(u'\xe2\x80\x82', '', chaine.count(u'\xe2\x80\x82'))
-#        chaine = chaine.replace(u'\xe2', '', chaine.count(u'\xe2'))
-#        chaine = chaine.replace(u'\x80', '', chaine.count(u'\x80'))
-#        chaine = chaine.replace(u'\x82', '', chaine.count(u'\x82'))
-#        chaine = chaine.replace(u'\xe9', '', chaine.count(u'\xe9'))
-#        chaine = chaine.replace(u'\xd6', '', chaine.count(u'\xd6'))
-#        chaine = chaine.replace(u'\xd2', '', chaine.count(u'\xd2'))
-#        chaine = chaine.replace(u'\xf6', '', chaine.count(u'\xf6'))
-#        chaine = chaine.replace(u'\xfc', '', chaine.count(u'\xfc'))
-#        chaine = chaine.replace(u'\u2002', '', chaine.count(u'\u2002'))
-#        chaine = chaine.replace(u'\xe1', '', chaine.count(u'\xe1'))
-#        chaine = chaine.replace(u'\xf3', '', chaine.count(u'\xf3'))
-#        chaine = chaine.replace(u'\xed', '', chaine.count(u'\xed'))
-#        chaine = chaine.replace(u'\xe4', '', chaine.count(u'\xe4'))
-#        chaine = chaine.replace(u'\xe7', '', chaine.count(u'\xe7'))
-#        chaine = chaine.replace(u'\xfa', '', chaine.count(u'\xfa'))
-#        chaine = chaine.replace(u'\xf1', '', chaine.count(u'\xf1'))
-        
-        try:
-            chaine = chaine.decode('latin1')
-            chaine = chaine.encode('utf8')
-            return chaine
-        except:
-            try:
-                chaine = chaine.decode('cp1252')
-                chaine = chaine.encode('utf8')
-                return chaine
-            except:
-#                print "unicode problem in formate"
-#                print chaine
-                pass
-        #chaine = quote(chaine)
-    #    table[chaine] = mem    
-#        import urllib
-#        chaine = urllib.quote(chaine.replace(u'\u2002', ''), safe='[]')
-        return unicode(chaine, 'utf8', 'ignore')
-    else:
-        return u''
-        
-def Formate2(chaine, pays):
-    """Nettoie la chaine. 
-        Vire le pays le cas échéant"""
-    #mem = chaine
-    if chaine is not None:
-        chaine = chaine.lower()
-        chaine = chaine.title()
-        chaine = chaine.replace('  ', ' ', chaine.count('  '))
-#        chaine = chaine.replace(u'\xe2\x80\x82', '', chaine.count(u'\xe2\x80\x82'))
-#        chaine = chaine.replace(u'\xe2', '', chaine.count(u'\xe2'))
-#        chaine = chaine.replace(u'\x80', '', chaine.count(u'\x80'))
-#        chaine = chaine.replace(u'\x82', '', chaine.count(u'\x82'))
-#        chaine = chaine.replace(u'\xe9', '', chaine.count(u'\xe9'))
-#        chaine = chaine.replace(u'\xd6', '', chaine.count(u'\xd6'))
-#        chaine = chaine.replace(u'\xfa', '', chaine.count(u'\xfa'))
-#        chaine = chaine.replace(u'\xd2', '', chaine.count(u'\xd2'))
-#        chaine = chaine.replace(u'\xf6', '', chaine.count(u'\xf6'))
-#        chaine = chaine.replace(u'\xfc', '', chaine.count(u'\xfc'))
-#        chaine = chaine.replace(u'\xe1', '', chaine.count(u'\xe1'))
-#        chaine = chaine.replace(u'\xf3', '', chaine.count(u'\xf3'))
-#        chaine = chaine.replace(u'\xed', '', chaine.count(u'\xed'))
-#        chaine = chaine.replace(u'\xe7', '', chaine.count(u'\xe7'))
-#        chaine = chaine.replace(u'\u2002', '', chaine.count(u'\u2002'))
-#        chaine = chaine.replace('%20', ' ', chaine.count('%20'))
-        #chaine = quote(chaine)
-    #    table[chaine] = mem    
-#        import urllib
-        #chaine = urllib.quote(chaine.replace(u'\u2002', ''), safe='[]')
-#        if chaine.count('['+pays+']')>0:
-#            chaine = chaine.replace('['+pays+']', '')
-#        if chaine.count('[') >0:
-#            chaine = chaine.split('[')[0] 
-        try:
-            chaine = chaine.decode('latin1')
-            chaine = chaine.encode('utf8')
-        except:
-            try:
-                chaine = chaine.decode('cp1252')
-                chaine = chaine.encode('utf8')
-            except:
-                pass
-                #print "unicode problem"
-            
-        return chaine
-    else:
-        return u''
 
 
 
@@ -726,15 +601,25 @@ def GenereReseaux3(G, ListeNode, PatentList, apparie, dynamic):
                         tempo.append( [pair[0], ll, pair[2]])
         else:
             tempo.append(pair)
+            
+    # unnesting things
     for pair in reseau:
+        for ind in range(len(pair)):
+            if isinstance(pair[ind], list):
+                if len(pair[ind]) ==1:
+                    pair[ind] = pair[ind][0]
+                else:
+                    #print "paté pair ", pair 
+                    pass
+                    
         if DateLien.has_key(pair[2]):
             DateLien[pair[2]].append((pair[0], pair[1], pair[3]))
         else:
             DateLien[pair[2]] = [(pair[0], pair[1], pair[3])]
     lstDate = DateLien.keys()
     lstDate.sort()
-    if len(lstDate) <1:
-        print "on fait quoi ?"
+    
+    
     cmt = 0
     for Date in lstDate:
         for pair in DateLien[Date]:
@@ -821,38 +706,10 @@ def FindFather(noeud, liste):
     for k in liste:
         if noeud.count(k)>0:
             return k
-    print noeud
+    
     return 
 
-def genereAppariementSimple(lstBrev, prop1, prop2):
-    """sur la liste des brevets, génère et renvoie la liste des appariements 
-    brev[prop1];brev[prop2]\n 
-    dans une liste de tuples sans données sur les arcs"""
-    res = []
-    if lstBrev is not None:
-        if prop1 in lstBrev[0].keys():
-            if prop2 in lstBrev[0].keys():
-                for Brev in lstBrev:
-                    if Brev[prop1] is not None and Brev[prop2] is not None:
-                        if type(Brev[prop1]) == type(u"") and type(Brev[prop2]) == type(u""):
-                            temp = (str(Formate(Brev[prop1])), str(Formate(Brev[prop2])))
-                            res.append(temp)
-                        elif type(Brev[prop1]) == type([]) and type(Brev[prop2]) == type(u""):
-                            for prop in Brev[prop1]:
-                                temp = (str(Formate(prop)), str(Formate(Brev[prop2])))
-                                res.append(temp)
-                        elif type(Brev[prop1]) == type(u"") and type(Brev[prop2]) == type([]):
-                            for prop in Brev[prop2]:
-                                temp = (str(Formate(Brev[prop1])), str(Formate(prop)))
-                                res.append(temp)
-                        else:
-                            for pro1 in Brev[prop1]:
-                                for pro2 in Brev[prop2]:
-                                    temp=(str(Formate(pro1)), str(Formate(pro2)))
-                                    res.append(temp) 
-                return res
-    else:
-        return None
+
         
 def Remplace(ListeBrev, prop, truc2, truc):
     """Remplace dans la liste des brevets pour la propriete "prop"
@@ -942,6 +799,7 @@ def GenereListeSansDate(ListeBrevet, prop):
     res = []
     
     for brev in ListeBrevet:
+            #print brev
             if type(brev[prop]) == type([]):
                 for k in brev[prop]:
                     if k not in res:
@@ -962,31 +820,6 @@ def change(NomDeNoeud):
     return NomDeNoeud
     
     
-def genereAppariement(lstBrev, prop1, prop2, sep, couleur = "grey" , label = ''):
-    """sur la liste des brevets, génère et renvoie la liste des appariements 
-    brev[prop1];brev[prop2]\n
-    dans une chaine de caractères"""
-    res = ""
-    if lstBrev is not None:
-        if prop1 in lstBrev[0].keys():
-            if prop2 in lstBrev[0].keys():
-                for Brev in lstBrev:
-                    if Brev[prop1] is not None and Brev[prop2] is not None:
-                        if type(Brev[prop1]) == type(u"") and type(Brev[prop2]) == type(u""):
-                            res += "(\'" + Formate(Brev[prop1]) +"\'" +sep + "\'" +Formate(Brev[prop2]) + "\'" +sep + "{ 'color' : "+ couleur+"','label':'"+label+"'})\n"
-                        elif type(Brev[prop1]) == type([]) and type(Brev[prop2]) == type(u""):
-                            for prop in Brev[prop1]:
-                                res +=  "(\'" +Formate(prop) +"\'" + sep +"\'" + Formate(Brev[prop2]) + "\'" +sep +"{'color':'"+ couleur+"','label':'"+label+"'})\n"
-                        elif type(Brev[prop1]) == type(u"") and type(Brev[prop2]) == type([]):
-                            for prop in Brev[prop2]:
-                                res +=  "(\'" +Formate(Brev[prop1]) + "\'" +sep + "\'" +Formate(prop) +"\'" + sep + "{'color':'"+ couleur +"','label':'"+label+"'})\n"
-                        else:
-                            for pro1 in Brev[prop1]:
-                                for pro2 in Brev[prop2]:
-                                    res+= "(\'" +  Formate(pro1) + "\'" +sep +"\'" + Formate(pro2) + "\'" +sep + "{'color':'"+ couleur+"','label':'"+label+ "'})\n" 
-                return res
-    else:
-        return None
 
     
 def quote(string):
