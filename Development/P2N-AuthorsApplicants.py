@@ -17,7 +17,16 @@ import os, sys, datetime
 
 ListeBrevet = []
 #ouverture fichier de travail
-ndf = sys.argv[1]
+#ndf = sys.argv[1]
+#On récupère la requête et les noms des fichiers de travail
+with open("requete.cql", "r") as fic:
+    contenu = fic.readlines()
+    for lig in contenu:
+      
+            if lig.count('request:')>0:
+                requete=lig.split(':')[1].strip()
+            if lig.count('DataDirectory:')>0:
+                ndf = lig.split(':')[1].strip()
 
 
 ResultPath = '..//DONNEES//PatentBiblios'
@@ -335,15 +344,49 @@ if ficOk:
     DateNoeud = dict()
     for lien in reseau:
         n1, n2, dat, pipo = lien
-        if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
-            DateNoeud[n1].append(dat)
-        elif not DateNoeud.has_key(n1):
-            DateNoeud[n1] = [dat]
-        if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
-            DateNoeud[n2].append(dat)
-        elif not DateNoeud.has_key(n2):
-            DateNoeud[n2] = [dat]
- 
+        
+        if isinstance(n1, list) and isinstance(n2, list):
+            for kk in n1:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+            for kk in n2:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+        
+        elif isinstance(n1, list) and not isinstance(n2, list):
+            for kk in n1:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+                if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
+                    DateNoeud[n2].append(dat)
+                elif not DateNoeud.has_key(n2):
+                    DateNoeud[n2] = [dat]
+        elif not isinstance(n1, list) and isinstance(n2, list):
+            for kk in n2:
+                if DateNoeud.has_key(kk) and dat not in DateNoeud[kk]:
+                    DateNoeud[kk].append(dat)
+                elif not DateNoeud.has_key(kk):
+                    DateNoeud[kk] = [dat]
+                if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
+                    DateNoeud[n1].append(dat)
+                elif not DateNoeud.has_key(n1):
+                    DateNoeud[n1] = [dat]
+        else:
+            if DateNoeud.has_key(n1) and dat not in DateNoeud[n1]:
+                DateNoeud[n1].append(dat)
+            elif not DateNoeud.has_key(n1):
+                DateNoeud[n1] = [dat]
+            if DateNoeud.has_key(n2) and dat not in DateNoeud[n2]:
+                DateNoeud[n2].append(dat)
+            elif not DateNoeud.has_key(n2):
+                DateNoeud[n2] = [dat]     
+
     #avoid lists in nodes
     reseautemp = []
     cpt =0
